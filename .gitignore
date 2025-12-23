@@ -13,9 +13,11 @@ yarn-error.log*
 # pdf / output
 *.pdf
 
-# test files (optional)
+# test files
 test-*.js
 test.svg
+out-*.pdf
+DEBUG_*.pdf
 
 # OS
 .DS_Store
