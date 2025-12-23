@@ -18,8 +18,7 @@ import crypto from 'crypto';
 dotenv.config();
 
 async function connectMongo() {
-  const mongoUri = process.env.MONGO_URI || 
-    'mongodb+srv://gajeraakshit53_db_user:lvbGcIFW0ul5Bao6@akshit.thyfwea.mongodb.net/securepdf?retryWrites=true&w=majority';
+  const mongoUri = process.env.MONGO_URI;
 
   if (!mongoUri) {
     console.error('MONGO_URI is not set in environment');

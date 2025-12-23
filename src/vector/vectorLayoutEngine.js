@@ -213,7 +213,7 @@ const inkscapeSvgToPdfBytes = async (svgContent) => {
   try {
     await fs.writeFile(inputSvgPath, svgContent, 'utf8');
 
-    const bin = process.env.INKSCAPE_BIN || 'inkscape';
+    const bin = process.env.INKSCAPE_PATH || 'inkscape';
     const args = [
       inputSvgPath,
       '--export-type=pdf',
@@ -227,7 +227,7 @@ const inkscapeSvgToPdfBytes = async (svgContent) => {
         if (err && err.code === 'ENOENT') {
           return reject(
             new Error(
-              `INKSCAPE_NOT_FOUND: Failed to spawn inkscape binary "${bin}". Install Inkscape and ensure it is in PATH, or set INKSCAPE_BIN to the full inkscape executable path.`
+              `INKSCAPE_NOT_FOUND: Failed to spawn inkscape binary "${bin}". Install Inkscape and ensure it is in PATH, or set INKSCAPE_PATH to the full inkscape executable path.`
             )
           );
         }

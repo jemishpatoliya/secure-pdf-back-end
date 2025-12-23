@@ -23,6 +23,9 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+const SERVICE_MODE = String(process.env.SERVICE_MODE || 'all').toLowerCase();
+const RUN_HTTP = SERVICE_MODE !== 'worker';
+const RUN_WORKERS = SERVICE_MODE !== 'web';
 
 app.use(cors());
 app.use(express.json({ limit: '900mb' }));
@@ -80,9 +83,7 @@ async function ensureAdminUser() {
 
 async function start() {
   try {
-    const mongoUri =
-      process.env.MONGO_URI ||
-      'mongodb+srv://gajeraakshit53_db_user:lvbGcIFW0ul5Bao6@akshit.thyfwea.mongodb.net/securepdf?retryWrites=true&w=majority';
+    const mongoUri = process.env.MONGO_URI;
 
     if (!mongoUri) {
       console.error('MONGO_URI is not set in environment');
@@ -105,12 +106,12 @@ async function start() {
     }
 
     // Test Inkscape availability
-    const inkscapeBin = process.env.INKSCAPE_BIN || 'inkscape';
+    const inkscapeBin = process.env.INKSCAPE_PATH || 'inkscape';
     await new Promise((resolve, reject) => {
       const test = spawn(inkscapeBin, ['--version'], { stdio: 'pipe' });
       test.on('error', (err) => {
         if (err.code === 'ENOENT') {
-          console.warn(`[Inkscape] Binary not found at "${inkscapeBin}". Install Inkscape or set INKSCAPE_BIN env var`);
+          console.warn(`[Inkscape] Binary not found at "${inkscapeBin}". Install Inkscape or set INKSCAPE_PATH env var`);
         } else {
           console.warn('[Inkscape] Error:', err.message);
         }
@@ -131,10 +132,19 @@ async function start() {
     });
    
 
-    await ensureAdminUser();
+    if (RUN_HTTP) {
+      await ensureAdminUser();
+    }
 
-    startVectorPdfWorkers();
-    startJobCleanupLoop();
+    if (RUN_WORKERS) {
+      startVectorPdfWorkers();
+      startJobCleanupLoop();
+    }
+
+    if (!RUN_HTTP) {
+      console.log(`[Service] SERVICE_MODE=${SERVICE_MODE}. HTTP server disabled; workers running: ${RUN_WORKERS}`);
+      return;
+    }
 
     const server = app.listen(PORT, () => {
       console.log(`Backend listening on port ${PORT}`);

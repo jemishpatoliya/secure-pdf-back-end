@@ -26,7 +26,7 @@ RUN apt-get update && apt-get install -y \
 RUN which inkscape && inkscape --version
 
 # Set environment variable for Inkscape path in production
-ENV INKSCAPE_BIN=/usr/bin/inkscape
+ENV INKSCAPE_PATH=/usr/bin/inkscape
 
 # Copy package files first for better caching
 COPY package*.json ./

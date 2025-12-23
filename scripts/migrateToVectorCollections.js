@@ -147,9 +147,7 @@ const migrateCollection = async ({ name, source, target }) => {
 };
 
 async function main() {
-  const mongoUri =
-    process.env.MONGO_URI ||
-    'mongodb+srv://gajeraakshit53_db_user:lvbGcIFW0ul5Bao6@akshit.thyfwea.mongodb.net/securepdf?retryWrites=true&w=majority';
+  const mongoUri = process.env.MONGO_URI;
 
   if (!mongoUri) {
     throw new Error('MONGO_URI is not set');
